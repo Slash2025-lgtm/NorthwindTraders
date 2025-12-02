@@ -1,11 +1,11 @@
 package com.pluralsight;
 
-import java.lang.reflect.Type;
 import java.sql.*;
 import java.util.Scanner;
 
 public class App {
     private static final Scanner keyboard = new Scanner(System.in);
+    private static boolean isChecking = false;
     public static void main(String[] args) {
         Connection connection = null;
         try {
@@ -26,9 +26,9 @@ public class App {
                 String option = keyboard.nextLine();
 
                 switch (option) {
-                    case "1" -> displayData(connection, "Products");
-                    case "2" -> displayData(connection, "Customers");
-                    case "3" -> displayData(connection, "Categories");
+                    case "1" -> displayData(connection, "Products", "");
+                    case "2" -> displayData(connection, "Customers", "");
+                    case "3" -> displayCategory(connection);
                     case "0" -> exit = true;
                     default -> System.out.println("Something went wrong try again");
                 }
@@ -46,12 +46,13 @@ public class App {
         }
     }
 
-    public static void displayData(Connection connection, String type) {
+    public static void displayData(Connection connection, String type, String check) {
         Statement statement = null;
         ResultSet results = null;
 
         try {
-            String query = "SELECT * FROM " + type;
+            String query = "SELECT * FROM " + type + check;
+
             statement = connection.prepareStatement(query);
             results = statement.executeQuery(query);
             if (type.equalsIgnoreCase("Customers")) {
@@ -71,6 +72,7 @@ public class App {
                     System.out.println("===============================");
                     System.out.println();
                 }
+                isChecking = false;
             } else if (type.equalsIgnoreCase("Products")) {
                 while (results.next()) {
                     int id = results.getInt("ProductID");
@@ -86,16 +88,7 @@ public class App {
                     System.out.println("===============================");
                     System.out.println();
                 }
-            } else if (type.equalsIgnoreCase("Categories")) {
-                while (results.next()) {
-                    int categoryID = results.getInt("CategoryID");
-                    String categoryName = results.getString("CategoryName");
-                    System.out.println("===============================");
-                    System.out.println("Category Id: " + categoryID);
-                    System.out.println("Category Name: " + categoryName);
-                    System.out.println("===============================");
-                    System.out.println();
-                }
+                isChecking = false;
             }
         } catch(SQLException e){
             System.out.println("Something has gone wrong in getting all you code");
@@ -115,5 +108,55 @@ public class App {
                 }
             }
         }
+    }
+
+    public static void displayCategory(Connection connection) {
+        isChecking = true;
+        String query = "SELECT * FROM Categories";
+        try (PreparedStatement statement = connection.prepareStatement(query);
+        ResultSet results = statement.executeQuery(query)) {
+
+            while (results.next()) {
+                int categoryID = results.getInt("CategoryID");
+                String categoryName = results.getString("CategoryName");
+                System.out.println("===============================");
+                System.out.println("Category Id: " + categoryID);
+                System.out.println("Category Name: " + categoryName);
+                System.out.println("===============================");
+                System.out.println();
+            }
+
+            boolean isNumber = false;
+            int categoryID = -1;
+            while (!isNumber) {
+                System.out.print("Enter one of the following category id's: ");
+                try {
+                    categoryID = keyboard.nextInt();
+                    keyboard.nextLine();
+                    isNumber = true;
+                } catch (Exception e) {
+                    System.out.println("You didn't type in a number so now skipping this");
+                    isNumber = true;
+                }
+            }
+            displayData(connection, "Products", " WHERE CategoryID = " + categoryID);
+        } catch (SQLException e) {
+
+        }
+    }
+
+    public static int getUserCategoryID() {
+        boolean isNumber = false;
+        int chosenNumber = -1;
+        while (!isNumber) {
+            System.out.print("Enter one of the following category id's: ");
+            try {
+                chosenNumber = keyboard.nextInt();
+                isNumber = true;
+            } catch (Exception e) {
+                System.out.println();
+            }
+        }
+        return chosenNumber;
     }
 }
