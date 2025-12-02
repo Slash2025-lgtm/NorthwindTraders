@@ -31,8 +31,6 @@ public class App {
                     default -> System.out.println("Something went wrong try again");
                 }
             }
-            System.exit(0);
-
         } catch (SQLException e) {
             System.out.println("Something went wrong");
         } finally {
