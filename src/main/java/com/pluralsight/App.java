@@ -20,6 +20,7 @@ public class App {
                 System.out.println("What do you want to do?");
                 System.out.println("\t1) Display all products");
                 System.out.println("\t2) Display all customers");
+                System.out.println("\t3) Display all categories");
                 System.out.println("\t0) Exit");
                 System.out.print("Enter an option above: ");
                 String option = keyboard.nextLine();
@@ -27,6 +28,7 @@ public class App {
                 switch (option) {
                     case "1" -> displayData(connection, "Products");
                     case "2" -> displayData(connection, "Customers");
+                    case "3" -> displayData(connection, "Categories");
                     case "0" -> exit = true;
                     default -> System.out.println("Something went wrong try again");
                 }
@@ -52,10 +54,9 @@ public class App {
             String query = "SELECT * FROM " + type;
             statement = connection.prepareStatement(query);
             results = statement.executeQuery(query);
-
             if (type.equalsIgnoreCase("Customers")) {
                 while (results.next()) {
-                    String  contactName = results.getString("ContactName");
+                    String contactName = results.getString("ContactName");
                     String companyName = results.getString("CompanyName");
                     String city = results.getString("City");
                     String country = results.getString("Country");
@@ -82,6 +83,16 @@ public class App {
                     System.out.println("Name: " + name);
                     System.out.println("Price: " + unitPrice);
                     System.out.println("Units In Stock: " + unitsInStock);
+                    System.out.println("===============================");
+                    System.out.println();
+                }
+            } else if (type.equalsIgnoreCase("Categories")) {
+                while (results.next()) {
+                    int categoryID = results.getInt("CategoryID");
+                    String categoryName = results.getString("CategoryName");
+                    System.out.println("===============================");
+                    System.out.println("Category Id: " + categoryID);
+                    System.out.println("Category Name: " + categoryName);
                     System.out.println("===============================");
                     System.out.println();
                 }
