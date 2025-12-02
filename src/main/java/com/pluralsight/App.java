@@ -75,8 +75,6 @@ public class App {
                     System.out.println();
                 }
             }
-            results.close();
-            statement.close();
         } catch(SQLException e){
             System.out.println("Something has gone wrong in getting all you code");
         } finally {
@@ -93,7 +91,11 @@ public class App {
                 } catch (SQLException e) {
                     System.out.println("something went wrong when closing your statement");
                 }
-
+            }
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                System.out.println("something went wrong when closing your connection");
             }
         }
     }
