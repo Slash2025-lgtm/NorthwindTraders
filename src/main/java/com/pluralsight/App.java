@@ -7,12 +7,13 @@ import java.util.Scanner;
 public class App {
     private static final Scanner keyboard = new Scanner(System.in);
     public static void main(String[] args) {
+        Connection connection = null;
         try {
             String url = args[0];
             String user = args[1];
             String password = args[2];
 
-            Connection connection = DriverManager.getConnection(url, user, password);
+            connection = DriverManager.getConnection(url, user, password);
 
             boolean exit = false;
             while (!exit) {
@@ -30,12 +31,18 @@ public class App {
                     default -> System.out.println("Something went wrong try again");
                 }
             }
-            connection.close();
             System.exit(0);
-
 
         } catch (SQLException e) {
             System.out.println("Something went wrong");
+        } finally {
+            if (connection != null) {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    System.out.println("something went wrong when closing your connection");
+                }
+            }
         }
     }
 
