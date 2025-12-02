@@ -1,5 +1,5 @@
 package com.pluralsight;
-
+import org.apache.commons.dbcp2.BasicDataSource;
 import java.sql.*;
 import java.util.Scanner;
 
@@ -9,11 +9,12 @@ public class App {
     public static void main(String[] args) {
         Connection connection = null;
         try {
-            String url = args[0];
-            String user = args[1];
-            String password = args[2];
+            BasicDataSource dataSource = new BasicDataSource();
+            dataSource.setUrl(args[0]);
+            dataSource.setUsername(args[1]);
+            dataSource.setPassword(args[2]);
 
-            connection = DriverManager.getConnection(url, user, password);
+            connection = dataSource.getConnection();
 
             boolean exit = false;
             while (!exit) {
