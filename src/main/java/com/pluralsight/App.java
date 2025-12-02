@@ -47,14 +47,10 @@ public class App {
     }
 
     public static void displayData(Connection connection, String type, String check) {
-        Statement statement = null;
-        ResultSet results = null;
+        String query = "SELECT * FROM " + type + check;
+        try (PreparedStatement statement = connection.prepareStatement(query);
+             ResultSet results = statement.executeQuery(query)) {
 
-        try {
-            String query = "SELECT * FROM " + type + check;
-
-            statement = connection.prepareStatement(query);
-            results = statement.executeQuery(query);
             if (type.equalsIgnoreCase("Customers")) {
                 while (results.next()) {
                     String contactName = results.getString("ContactName");
@@ -92,21 +88,6 @@ public class App {
             }
         } catch(SQLException e){
             System.out.println("Something has gone wrong in getting all you code");
-        } finally {
-            if (results != null) {
-                try {
-                    results.close();
-                } catch (SQLException e) {
-                    System.out.println("something went wrong when closing your result");
-                }
-            }
-            if (statement != null) {
-                try {
-                    statement.close();
-                } catch (SQLException e) {
-                    System.out.println("something went wrong when closing your statement");
-                }
-            }
         }
     }
 
@@ -114,7 +95,7 @@ public class App {
         isChecking = true;
         String query = "SELECT * FROM Categories";
         try (PreparedStatement statement = connection.prepareStatement(query);
-        ResultSet results = statement.executeQuery(query)) {
+             ResultSet results = statement.executeQuery(query)) {
 
             while (results.next()) {
                 int categoryID = results.getInt("CategoryID");
@@ -143,20 +124,5 @@ public class App {
         } catch (SQLException e) {
 
         }
-    }
-
-    public static int getUserCategoryID() {
-        boolean isNumber = false;
-        int chosenNumber = -1;
-        while (!isNumber) {
-            System.out.print("Enter one of the following category id's: ");
-            try {
-                chosenNumber = keyboard.nextInt();
-                isNumber = true;
-            } catch (Exception e) {
-                System.out.println();
-            }
-        }
-        return chosenNumber;
     }
 }
