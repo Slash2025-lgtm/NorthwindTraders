@@ -12,8 +12,8 @@ public class App {
             String user = args[1];
             String password = args[2];
 
-            Connection connection = DriverManager.getConnection(url, user, password);
             while (true) {
+                Connection connection = DriverManager.getConnection(url, user, password);
                 System.out.println("What do you want to do?");
                 System.out.println("\t1) Display all products");
                 System.out.println("\t2) Display all customers");
