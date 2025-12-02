@@ -12,8 +12,10 @@ public class App {
             String user = args[1];
             String password = args[2];
 
-            while (true) {
-                Connection connection = DriverManager.getConnection(url, user, password);
+            Connection connection = DriverManager.getConnection(url, user, password);
+
+            boolean exit = false;
+            while (!exit) {
                 System.out.println("What do you want to do?");
                 System.out.println("\t1) Display all products");
                 System.out.println("\t2) Display all customers");
@@ -24,10 +26,14 @@ public class App {
                 switch (option) {
                     case "1" -> displayData(connection, "Products");
                     case "2" -> displayData(connection, "Customers");
-                    case "0" -> System.exit(0);
+                    case "0" -> exit = true;
                     default -> System.out.println("Something went wrong try again");
                 }
             }
+            connection.close();
+            System.exit(0);
+
+
         } catch (SQLException e) {
             System.out.println("Something went wrong");
         }
@@ -91,11 +97,6 @@ public class App {
                 } catch (SQLException e) {
                     System.out.println("something went wrong when closing your statement");
                 }
-            }
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                System.out.println("something went wrong when closing your connection");
             }
         }
     }
